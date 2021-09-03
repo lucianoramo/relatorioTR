@@ -4,25 +4,61 @@ function getCardsbyDate(dates) {
 
   const cards = getDataFromDoneSheet()
 
-  const cardsFiltradosPorData = cards.filter(card => card[9] > dates[0] && card[9] < dates[1])
-
-  console.log(`# cards cardsFiltradosPorData por data: ${cardsFiltradosPorData.length}`)
+  const cardsFiltradosPorData = cards.filter(card => card[9] > dates[0] && card[9] < dates[1]).map((filteredCard) => {
+    return {
+      "id": filteredCard[0],
+      "atestadoPor": filteredCard[2],
+      "atestadoEm": filteredCard[9],
+      "textoAtestado": filteredCard[6]
+    }
+  })
+  console.log(`#FiltradosPorData por data: ${JSON.stringify(cardsFiltradosPorData)}`)
 
   return cardsFiltradosPorData
 }
 
-function getPreparadoInfo(cardId = "UN-15", dataFromPreparadoSheet = getDataPreparado()) {
-  const retorno = dataFromPreparadoSheet.find(card => card[0] === cardId);
-  console.log(retorno[2],retorno[6], retorno[7])
+function getPreparadoInfo(cardId, dataFromPreparadoSheet) {
+  if (!cardId || !dataFromPreparadoSheet) return
+  const preparadoData = dataFromPreparadoSheet.find(card => card[0] === cardId);
+  //console.log(preparadoData)
+  return preparadoData ? {
+    "id": preparadoData[0],
+    "autorizadoPor": preparadoData[2],
+    "autorizadoEm": preparadoData[9],
+    "textoAutorizado": preparadoData[7]
+  } : undefined;
 }
 
+
+function getCardDetails(cardId, detailedCardData) {
+  if (!cardId || !detailedCardData) return
+  const detailedData = detailedCardData.find(card => card[2] === cardId);
+  //console.log(detailedData);
+  return detailedData ? {
+    "id": detailedData[2],
+    "timeSpentSeconds": detailedData[8] / 3600,
+    "horasFaturar": detailedData[9],
+    "summary": detailedData[3]
+  } : undefined;
+}
+
+
+function testes() {
+  // console.log(`teste 1: ${getCardDetails(null,getDetailedCardData())}`)
+  // console.log(`teste 2: ${getCardDetails("",getDetailedCardData())}`)
+  // console.log(`teste 3: ${getCardDetails("UN-13",getDetailedCardData())}`)
+  // console.log(`teste 4: ${getCardDetails("UN-13",null)}`)
+  console.log(`teste 5: ${JSON.stringify(getCardDetails("UN-13", getDetailedCardData()))}`)
+
+  //getCardsbyDate(getDatesFromReport())
+}
 
 function getDadosCompletos() {
 
   const dados_done = getCardsbyDate(getDatesFromReport())
-  const dados_prep = getDataPreparado()
-  const dados_card = getDataCards()
-  const dados_projetos = getDataProjetos()
+  const dados_prep = getDataFromPreparadoSheet()
+  const dados_card = getDetailedCardData()
+  const dados_projetos = getDataFromProjetosSheet()
 
   let dados_final = []
 
