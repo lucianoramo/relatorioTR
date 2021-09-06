@@ -1,3 +1,24 @@
+function init() {
+  const cardsByDate = getCardsbyDate(getDatesFromReport())
+  const cardsPreparado = getDataFromPreparadoSheet()
+  const cardsDetails = getDetailedCardData()
+  const cardsProjetos = getProjectDetails()
+  let totalArray = []
+  cardsByDate.map((card, index) => {
+    //console.log(`Card (${index}): ${card.id} `)
+    
+    totalArray = [...totalArray, Object.values(
+      {
+        ...card,
+        ...getPreparadoInfo(card.id, cardsPreparado),
+        ...getCardDetails(card.id, cardsDetails),
+        ...getCardDetails(card.projeto, cardsProjetos),
+      })]
+  })
+  console.log(`total ${totalArray[0]}`)
+}
+
+
 function getCardsbyDate(dates) {
 
   if (!dates) return null;
@@ -12,7 +33,7 @@ function getCardsbyDate(dates) {
       "textoAtestado": filteredCard[6]
     }
   })
-  console.log(`#FiltradosPorData por data: ${JSON.stringify(cardsFiltradosPorData)}`)
+  //console.log(`#FiltradosPorData por data: ${JSON.stringify(cardsFiltradosPorData)}`)
 
   return cardsFiltradosPorData
 }
@@ -42,13 +63,31 @@ function getCardDetails(cardId, detailedCardData) {
   } : undefined;
 }
 
+function getProjectDetails(projectName, projectDetails) {
+  if (!projectName || !projectDetails) return
+  const detailedData = projectDetails.find(card => card[8] === projectName);
+  //console.log(detailedData); demandante	entidade	projeto	time	perc_cni	perc_sesi	perc_senai	perc_iel	fornecedor
+  return detailedData ? {
+    "demandante": detailedData[6],
+    "entidade": detailedData[7],
+    "projeto": detailedData[8],
+    "time": detailedData[9],
+    "cni": detailedData[10],
+    "sesi": detailedData[11],
+    "senai": detailedData[12],
+    "iel": detailedData[13],
+    "fornecedor": detailedData[14],
+
+  } : undefined;
+}
+
 
 function testes() {
   // console.log(`teste 1: ${getCardDetails(null,getDetailedCardData())}`)
   // console.log(`teste 2: ${getCardDetails("",getDetailedCardData())}`)
   // console.log(`teste 3: ${getCardDetails("UN-13",getDetailedCardData())}`)
   // console.log(`teste 4: ${getCardDetails("UN-13",null)}`)
-  console.log(`teste 5: ${JSON.stringify(getCardDetails("UN-13", getDetailedCardData()))}`)
+  console.log(`teste 5: ${JSON.stringify(getProjectDetails("Unindústria", getDataFromProjetosSheet()))}`)
 
   //getCardsbyDate(getDatesFromReport())
 }
