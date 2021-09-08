@@ -1,21 +1,38 @@
-function init() {
+function writeReport(data) {  
+  const initRowNumber = 1;
+  const initColumnNumber = 1;
+  const numberOfRows = data.length
+  const numberOfColumns = data[0].length
+  console.log("writeReport => numberOfColumns", numberOfColumns)
+
+  
+ 
+  
+
+}
+
+
+function getFullReportData() {
+
   const cardsByDate = getCardsbyDate(getDatesFromReport())
   const cardsPreparado = getDataFromPreparadoSheet()
   const cardsDetails = getDetailedCardData()
-  const cardsProjetos = getProjectDetails()
+  const cardsProjetos = getDataFromProjetosSheet()
+
   let totalArray = []
+
   cardsByDate.map((card, index) => {
-    //console.log(`Card (${index}): ${card.id} `)
-    
-    totalArray = [...totalArray, Object.values(
+
+    totalArray = [...totalArray, 
       {
         ...card,
         ...getPreparadoInfo(card.id, cardsPreparado),
         ...getCardDetails(card.id, cardsDetails),
-        ...getCardDetails(card.projeto, cardsProjetos),
-      })]
+        ...getProjectDetails(card.projeto, cardsProjetos),
+      }]
   })
-  console.log(`total ${totalArray[0]}`)
+  console.log(`total ${JSON.stringify(totalArray[0])}`)
+  return totalArray
 }
 
 
@@ -30,7 +47,8 @@ function getCardsbyDate(dates) {
       "id": filteredCard[0],
       "atestadoPor": filteredCard[2],
       "atestadoEm": filteredCard[9],
-      "textoAtestado": filteredCard[6]
+      "textoAtestado": filteredCard[6],
+      "projeto":filteredCard[1]
     }
   })
   //console.log(`#FiltradosPorData por data: ${JSON.stringify(cardsFiltradosPorData)}`)
